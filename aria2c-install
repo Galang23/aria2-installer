@@ -71,6 +71,23 @@ echo $PWD
 cd $DLPATH
 echo $PWD
 
+echo " "
+echo libgcrypt
+echo Downloading...
+wget "https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$LIBGCRYPT_VERSION.tar.bz2"
+echo Extracting...
+tar -xf libgcrypt-$LIBGCRYPT_VERSION.tar.bz2
+echo Configuring ...
+cd libgcrypt-$LIBGCRYPT_VERSION
+./configure --prefix=$PREFIXPATH/libgcrypt --with-gpg-error-prefix=$PREFIXPATH/libgpg-error
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
 
 echo " "
 echo zlib
@@ -216,24 +233,6 @@ tar -xf libssh2-$LIBSSH2_VERSION.tar.gz
 echo Configuring ...
 cd libssh2-$LIBSSH2_VERSION
 ./configure --prefix=$PREFIXPATH/libssh2
-echo Compiling...
-make 
-echo Installing
-make install
-echo Exiting directory...
-echo $PWD
-cd $DLPATH
-echo $PWD
-
-echo " "
-echo libgcrypt
-echo Downloading...
-wget "https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$LIBGCRYPT_VERSION.tar.bz2"
-echo Extracting...
-tar -xf libgcrypt-$LIBGCRYPT_VERSION.tar.bz2
-echo Configuring ...
-cd libgcrypt-$LIBGCRYPT_VERSION
-./configure --prefix=$PREFIXPATH/libgcrypt --with-gpg-error-prefix=$PREFIXPATH/libgpg-error
 echo Compiling...
 make 
 echo Installing
