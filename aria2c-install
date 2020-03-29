@@ -11,10 +11,10 @@ echo by Galang23
 
 # always latest if not forget to update
 LIBGPGERROR_VERSION=1.37
-#LIBGCRYPT_VERSION=1.8.5
+LIBGCRYPT_VERSION=1.8.5
 ZLIB_VERSION=1.2.11
-GMP_VERSION=6.2.0
 NETTLE_VERSION=3.4.1
+GMP_VERSION=6.2.0
 UNBOUND_VERSION=1.10.0
 LIBTASN1_VERSION=4.16.0
 P11_KIT_VERSION=0.23.20
@@ -35,7 +35,7 @@ dojob(){
 echo Doing jobs...
 
 # Set LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$PREFIXPATH/gmp/lib:$PREFIXPATH/nettle/lib64:/home/lipsum/dl/nettle-3.4.1/:$PREFIXPATH/libtasn1/lib/:$PREFIXPATH/p11-kit/lib:$PREFIXPATH/gnutls/lib:$PREFIXPATH/jemalloc/lib 
+export LD_LIBRARY_PATH=$PREFIXPATH/gmp/lib:$PREFIXPATH/nettle/lib:$PREFIXPATH/libtasn1/lib/:$PREFIXPATH/p11-kit/lib:$PREFIXPATH/gnutls/lib:$PREFIXPATH/jemalloc/lib 
 
 # Set PKG_CONFIG_PATH so no package not found error
 export PKG_CONFIG_PATH=$PREFIXPATH/libtasn1/lib/pkgconfig/:$PREFIXPATH/nettle/lib64/pkgconfig:$PREFIXPATH/unbound/lib/:$PREFIXPATH/libtasn1/lib/pkgconfig/:$PREFIXPATH/gnutls/lib/pkgconfig:$PREFIXPATH/libssh2/lib/pkgconfig:$PREFIXPATH/c-ares/lib/pkgconfig:$PREFIXPATH/zlib/pkgconfig:$PREFIXPATH/libgcrypt/lib/pkgconfig:$PREFIXPATH/gmp/lib/pkgconfig:$PREFIXPATH/libxml2/lib/pkgconfig:$PREFIXPATH/jemalloc/lib/pkgconfig:$PREFIXPATH/sqlite3/lib/pkgconfig
@@ -91,24 +91,6 @@ cd $DLPATH
 echo $PWD
 
 echo " "
-echo GMP
-echo Downloading...
-wget "https://gmplib.org/download/gmp/gmp-$GMP_VERSION.tar.gz"
-echo Extracting...
-tar -xf gmp-$GMP_VERSION.tar.gz
-echo Configuring ...
-cd gmp-$GMP_VERSION
-./configure --prefix=$PREFIXPATH/gmp
-echo Compiling...
-make 
-echo Installing
-make install
-echo Exiting directory...
-echo $PWD
-cd $DLPATH
-echo $PWD
-
-echo " "
 echo GNU Nettle
 echo Downloading...
 wget "https://ftp.gnu.org/gnu/nettle/nettle-$NETTLE_VERSION.tar.gz"
@@ -127,9 +109,27 @@ cp libnettle.so $PREFIXPATH/nettle/lib
 cd $PREFIXPATH/nettle/lib
 ln -s libhogweed.so libhogweed.so.5
 ln -s libnettle.so libnettle.so.7
-export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PREFIXPATH/nettle/lib64/pkgconfig"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PREFIXPATH/nettle/lib/pkgconfig"
 echo Exiting directory...
 cd $DLPATH
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo GMP
+echo Downloading...
+wget "https://gmplib.org/download/gmp/gmp-$GMP_VERSION.tar.gz"
+echo Extracting...
+tar -xf gmp-$GMP_VERSION.tar.gz
+echo Configuring ...
+cd gmp-$GMP_VERSION
+./configure --prefix=$PREFIXPATH/gmp
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
 echo $PWD
 cd $DLPATH
 echo $PWD
