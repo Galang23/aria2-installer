@@ -38,5 +38,5 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: Build Artifact
-        path: ../release
+        path: $HOME/release
     
