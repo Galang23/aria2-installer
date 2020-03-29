@@ -1,0 +1,400 @@
+#!/bin/bash -xv
+
+trap 'err=$?; echo >&2 "Exiting on error $err"; exit $err' ERR
+
+###################
+# VERSION TESTING #
+###################
+
+echo aria2c compiler
+echo by Galang23
+
+# always latest if not forget to update
+LIBGPGERROR_VERSION=1.37
+#LIBGCRYPT_VERSION=1.8.5
+ZLIB_VERSION=1.2.11
+GMP_VERSION=6.2.0
+NETTLE_VERSION=3.4.1
+UNBOUND_VERSION=1.10.0
+LIBTASN1_VERSION=4.16.0
+P11_KIT_VERSION=0.23.20
+GTLS_VERSION=3.6.12
+LIBSSH2_VERSION=1.9.0
+LIBC_ARES_VERSION=1.16.0
+LIBXML2_VERSION=2.9.10
+SQLITE3_VERSION=3310100
+JEMALLOC_VERSION=5.2.1
+ARIA2_VERSION=1.35.0
+
+
+dojob(){
+###############################
+## Enter the instalation mode
+###############################
+
+echo Doing jobs...
+
+# Set LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$PREFIXPATH/gmp/lib:$PREFIXPATH/nettle/lib64:/home/lipsum/dl/nettle-3.4.1/:$PREFIXPATH/libtasn1/lib/:$PREFIXPATH/p11-kit/lib:$PREFIXPATH/gnutls/lib:$PREFIXPATH/jemalloc/lib 
+
+# Set PKG_CONFIG_PATH so no package not found error
+export PKG_CONFIG_PATH=$PREFIXPATH/libtasn1/lib/pkgconfig/:$PREFIXPATH/nettle/lib64/pkgconfig:$PREFIXPATH/unbound/lib/:$PREFIXPATH/libtasn1/lib/pkgconfig/:$PREFIXPATH/gnutls/lib/pkgconfig:$PREFIXPATH/libssh2/lib/pkgconfig:$PREFIXPATH/c-ares/lib/pkgconfig:$PREFIXPATH/zlib/pkgconfig:$PREFIXPATH/libgcrypt/lib/pkgconfig:$PREFIXPATH/gmp/lib/pkgconfig:$PREFIXPATH/libxml2/lib/pkgconfig:$PREFIXPATH/jemalloc/lib/pkgconfig:$PREFIXPATH/sqlite3/lib/pkgconfig
+
+# Create and go to PREFIX directory
+# THIS IS JUST TEST
+echo PREFIXPATH is $PREFIXPATH 
+echo DLPATH is $DLPATH
+sleep 10
+
+mkdir -p "$PREFIXPATH"
+mkdir -p "$DLPATH"
+cd "$DLPATH"
+echo $PWD
+echo Processing...
+sleep 15
+
+echo " "
+echo libgpg-error
+echo Downloading...
+wget "https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-$LIBGPGERROR_VERSION.tar.bz2"
+echo Extracting...
+tar -xf libgpg-error-$LIBGPGERROR_VERSION.tar.bz2
+cd libgpg-error-$LIBGPGERROR_VERSION
+echo Configuring ...
+./configure --prefix=$PREFIXPATH/libgpg-error
+echo Compiling...
+make
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+
+echo " "
+echo zlib
+echo Downloading...
+wget "https://zlib.net/zlib-$ZLIB_VERSION.tar.gz"
+echo Extracting...
+tar -xf zlib-$ZLIB_VERSION.tar.gz
+echo Configuring ...
+cd zlib-$ZLIB_VERSION
+./configure --prefix=$PREFIXPATH/zlib
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo GMP
+echo Downloading...
+wget "https://gmplib.org/download/gmp/gmp-$GMP_VERSION.tar.gz"
+echo Extracting...
+tar -xf gmp-$GMP_VERSION.tar.gz
+echo Configuring ...
+cd gmp-$GMP_VERSION
+./configure --prefix=$PREFIXPATH/gmp
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo GNU Nettle
+echo Downloading...
+wget "https://ftp.gnu.org/gnu/nettle/nettle-$NETTLE_VERSION.tar.gz"
+echo Extracting...
+tar -xf nettle-$NETTLE_VERSION.tar.gz
+echo Configuring ...
+cd nettle-$NETTLE_VERSION
+./configure --prefix=$PREFIXPATH/nettle --with-gmp=$PREFIXPATH/gmp
+echo Compiling...
+make 
+echo Installing
+make install
+mkdir -p $PREFIXPATH/nettle/lib
+cp libhogweed.so $PREFIXPATH/nettle/lib
+cp libnettle.so $PREFIXPATH/nettle/lib
+cd $PREFIXPATH/nettle/lib
+ln -s libhogweed.so libhogweed.so.5
+ln -s libnettle.so libnettle.so.7
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PREFIXPATH/nettle/lib64/pkgconfig"
+echo Exiting directory...
+cd $DLPATH
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo Unbound
+echo Downloading...
+wget "https://nlnetlabs.nl/downloads/unbound/unbound-$UNBOUND_VERSION.tar.gz"
+echo Extracting...
+tar -xf unbound-$UNBOUND_VERSION.tar.gz
+echo Configuring ...
+cd unbound-$UNBOUND_VERSION
+./configure --prefix=$PREFIXPATH/unbound
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo libtasn1
+echo Downloading...
+wget "ftp://ftp.gnu.org/gnu/libtasn1/libtasn1-$LIBTASN1_VERSION.tar.gz"
+echo Extracting...
+tar -xf libtasn1-$LIBTASN1_VERSION.tar.gz
+echo Configuring ...
+cd libtasn1-$LIBTASN1_VERSION
+./configure --prefix=$PREFIXPATH/libtasn1
+echo Compiling...
+make 
+echo Installing
+make install
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PREFIXPATH/libtasn1/lib/pkgconfig"
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+#echo " "
+#echo p11-kit
+#echo Downloading...
+#wget "https://github.com/p11-glue/p11-kit/releases/download/0.23.20/p11-kit-$P11_KIT_VERSION.tar.xz"
+#echo Extracting...
+#tar -xf p11-kit-$P11_KIT_VERSION.tar.xz
+#echo Configuring ...
+#cd p11-kit-$P11_KIT_VERSION
+#./configure --prefix=$PREFIXPATH/p11-kit
+#echo Compiling...
+#make 
+#echo Installing
+#make install
+#cd $OLDPWD
+#echo Exiting directory...
+#cd ..
+
+echo " "
+echo GNU TLS
+echo Downloading...
+wget "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-$GTLS_VERSION.tar.xz"
+echo Extracting...
+tar -xf gnutls-$GTLS_VERSION.tar.xz
+echo Configuring ...
+cd gnutls-$GTLS_VERSION
+./configure --prefix=$PREFIXPATH/gnutls --with-included-unistring --without-p11-kit --includedir=$PREFIXPATH/libtasn1/include --disable-doc
+cp $PREFIXPATH/libtasn1/include/libtasn1.h src/
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo libssh2
+echo Downloading...
+wget "https://www.libssh2.org/download/libssh2-$LIBSSH2_VERSION.tar.gz"
+echo Extracting...
+tar -xf libssh2-$LIBSSH2_VERSION.tar.gz
+echo Configuring ...
+cd libssh2-$LIBSSH2_VERSION
+./configure --prefix=$PREFIXPATH/libssh2
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo libgcrypt
+echo Downloading...
+wget "https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$LIBGCRYPT_VERSION.tar.bz2"
+echo Extracting...
+tar -xf libgcrypt-$LIBGCRYPT_VERSION.tar.bz2
+echo Configuring ...
+cd libgcrypt-$LIBGCRYPT_VERSION
+./configure --prefix=$PREFIXPATH/libgcrypt --with-gpg-error-prefix=$PREFIXPATH/libgpg-error
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo libc-ares
+echo Downloading...
+wget "https://c-ares.haxx.se/download/c-ares-$LIBC_ARES_VERSION.tar.gz"
+echo Extracting...
+tar -xf c-ares-$LIBC_ARES_VERSION.tar.gz
+echo Configuring ...
+cd c-ares-$LIBC_ARES_VERSION
+./configure --prefix=$PREFIXPATH/c-ares
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo libxml2
+echo Downloading...
+wget "ftp://xmlsoft.org/libxml2/libxml2-$LIBXML2_VERSION.tar.gz"
+echo Extracting...
+tar -xf libxml2-$LIBXML2_VERSION.tar.gz
+echo Configuring ...
+cd libxml2-$LIBXML2_VERSION
+./configure --prefix=$PREFIXPATH/libxml2
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo SQLite3
+echo " "
+echo Downloading...
+wget "https://sqlite.org/2020/sqlite-autoconf-$SQLITE3_VERSION.tar.gz"
+echo Extracting...
+tar -xf sqlite-autoconf-$SQLITE3_VERSION.tar.gz
+echo Configuring ...
+cd sqlite-autoconf-$SQLITE3_VERSION
+./configure --prefix=$PREFIXPATH/sqlite3
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo jemalloc
+echo Downloading...
+wget "https://github.com/jemalloc/jemalloc/releases/download/$JEMALLOC_VERSION/jemalloc-$JEMALLOC_VERSION.tar.bz2"
+echo Extracting...
+tar -xf jemalloc-$JEMALLOC_VERSION.tar.bz2
+echo Configuring ...
+cd jemalloc-$JEMALLOC_VERSION
+./configure --prefix=$PREFIXPATH/jemalloc
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo " "
+echo aria2
+echo Downloading...
+wget "https://github.com/aria2/aria2/releases/download/release-$ARIA2_VERSION/aria2-$ARIA2_VERSION.tar.gz"
+echo Extracting...
+tar -xf aria2-$ARIA2_VERSION.tar.gz
+echo Configuring ...
+cd aria2-$ARIA2_VERSION
+./configure --prefix=$PREFIXPATH/aria2 --with-jemalloc --without-openssl
+echo Compiling...
+make 
+echo Installing
+make install
+echo Exiting directory...
+echo $PWD
+cd $DLPATH
+echo $PWD
+
+echo Cleaning up...
+rm -rf *.tar.*
+
+echo Done!
+echo Aria2 is installed in $PREFIXPATH/aria2/bin/aria2c
+cd $PREFIXPATH
+}
+
+proceed(){
+echo " "
+echo Note that each dependency will be downloaded in a folder you specified and installed in its own folder in \$PREFIXPATH.
+echo ex: \$PREFIXPATH/libxml2, \$PREFIXPATH/libssh2
+echo "Please use full path (/path/to/some) and not ~ nor \$PATHLOCATION"
+
+while [ "x$PREFIXPATH" = "x" -a "x$DLPATH" = "x" ]; do
+printf "Where do you want to install these? "
+#read -r input
+input=../release
+if [ -z $input ]; then
+	echo PREFIXPATH must not empty!
+	echo Please try again.
+else
+	PREFIXPATH=$input
+fi
+printf "Where do you want to download these? "
+#read -r input
+input=../dl/aria2-deps
+if [ -z $input ]; then
+	echo DLPATH must not empty!
+	echo Please try again.
+else
+	DLPATH=$input
+fi
+
+
+printf "$PREFIXPATH is the installation location. Correct? [yes|no] "
+#read -r verifyprefix
+verifyprefix=yes
+printf "$DLPATH is the download location. Correct? [yes|no] "
+#read -r verifydl
+verifydl=yes
+if [ $verifyprefix = "yes" -a $verifydl = "yes" ]; then
+	dojob
+else
+	echo Please try again.
+	echo "  "
+fi
+
+done
+}
+
+echo THIS IS TEST VERSION OF THE SCRIPT. REMOVE COMMENT BEFORE read TO RELEASE IT!
+
+echo This is direct installation script.
+echo It will download aria2c, its dependencies, and compile it.
+echo Make sure wget is installed.
+printf "Proceed? [yes|no] "
+#read -r concent
+concent=yes
+if [ $concent = "yes" ]; then
+	proceed
+elif [ $concent = "no" ]; then
+	exit 0;
+fi
+
