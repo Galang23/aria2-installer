@@ -350,7 +350,7 @@ echo "Please use full path (/path/to/some) and not ~ nor \$PATHLOCATION"
 while [ "x$PREFIXPATH" = "x" -a "x$DLPATH" = "x" ]; do
 printf "Where do you want to install these? "
 #read -r input
-input=../release
+input=release
 if [ -z $input ]; then
 	echo PREFIXPATH must not empty!
 	echo Please try again.
@@ -359,7 +359,7 @@ else
 fi
 printf "Where do you want to download these? "
 #read -r input
-input=../dl/aria2-deps
+input=dl/aria2-deps
 if [ -z $input ]; then
 	echo DLPATH must not empty!
 	echo Please try again.
